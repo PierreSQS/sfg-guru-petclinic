@@ -4,12 +4,7 @@ import guru.springframework.sfgpetclinic.model.Owner;
 
 import java.util.List;
 
-public interface OwnerService {
+public interface OwnerService extends CrudService<Owner, Long> {
     List<Owner> findByLastName(Owner owner);
 
-    Owner findById(Long id);
-
-    List<Owner> findAll();
-
-    Owner save(Owner owner);
 }
