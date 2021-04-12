@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-//TODO analyze Behavior when IDs not set
 @Slf4j
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -47,18 +46,21 @@ public class DataLoader implements CommandLineRunner {
         log.info("####### Saved Owners #########");
 
         Vet vet1 = new Vet();
+        vet1.setId(1L);
         vet1.setFirstName("Paul");
         vet1.setLastName("Owona");
 
         vetService.save(vet1);
 
         Vet vet2 = new Vet();
+        vet2.setId(2L);
         vet2.setFirstName("Adamou");
         vet2.setLastName("Ndam Njoya");
 
         vetService.save(vet2);
 
         Vet vet3 = new Vet();
+        vet3.setId(3L);
         vet3.setFirstName("Nathalie");
         vet3.setLastName("Nkoa");
 
