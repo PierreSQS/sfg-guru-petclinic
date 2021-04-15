@@ -20,8 +20,8 @@ public class PetTypeMapService extends AbstractMapService<PetType, Long> impleme
     }
 
     @Override
-    public void delete(PetType petype) {
-        super.delete(petype);
+    public void delete(PetType petType) {
+        super.delete(petType);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class PetTypeMapService extends AbstractMapService<PetType, Long> impleme
     }
 
     @Override
-    public PetType save(PetType petype) {
-        return super.save(petype);
+    public PetType save(PetType petType) {
+        return super.save(petType);
     }
 }
