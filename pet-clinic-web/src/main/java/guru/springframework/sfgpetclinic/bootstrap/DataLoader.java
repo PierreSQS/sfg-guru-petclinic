@@ -16,13 +16,16 @@ public class DataLoader implements CommandLineRunner {
     private final VetService vetService;
     private final PetTypeService petTypeService;
     private final SpecialityService specialityService;
+    private final VisitService visitService;
 
-    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService, SpecialityService specialityService) {
+    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService,
+                      SpecialityService specialityService, VisitService visitService) {
 
         this.ownerService = ownerService;
         this.vetService = vetService;
         this.petTypeService = petTypeService;
         this.specialityService = specialityService;
+        this.visitService = visitService;
     }
 
     @Override
@@ -36,12 +39,12 @@ public class DataLoader implements CommandLineRunner {
     private void loadData() {
         PetType dog = new PetType();
         dog.setName("Dog");
-        PetType savedDogPet = petTypeService.save(dog);
+        PetType savedPetTypeDog = petTypeService.save(dog);
 
         PetType cat = new PetType();
         cat.setName("Cat");
-        PetType savedCatPet = petTypeService.save(cat);
-        log.info("####### Saved PetTypes {} {} #########", savedCatPet, savedDogPet);
+        PetType savedPetTypeCat = petTypeService.save(cat);
+        log.info("####### Saved PetTypes {} {} #########", savedPetTypeCat, savedPetTypeDog);
 
         Speciality radiology = new Speciality();
         radiology.setDescription("Radiology");
@@ -57,7 +60,7 @@ public class DataLoader implements CommandLineRunner {
 
         Owner owner1 = new Owner();
         Pet pet1 = new Pet();
-        pet1.setPetType(savedDogPet);
+        pet1.setPetType(savedPetTypeDog);
         pet1.setBirthDate(LocalDate.of(2011, 1, 1));
         pet1.setName("Fluppy");
         pet1.setOwner(owner1);
@@ -71,9 +74,13 @@ public class DataLoader implements CommandLineRunner {
 
         ownerService.save(owner1);
 
+        Visit firstVisitOfPet2 = new Visit();
+        firstVisitOfPet2.setDate(LocalDate.of(2021,4,17));
+        firstVisitOfPet2.setReason("Sneezy Kitty");
+
         Owner owner2 = new Owner();
         Pet pet2 = new Pet();
-        pet2.setPetType(savedCatPet);
+        pet2.setPetType(savedPetTypeCat);
         pet2.setBirthDate(LocalDate.of(2012, 2, 2));
         pet2.setName("Tessy");
         pet2.setOwner(owner2);
@@ -86,6 +93,11 @@ public class DataLoader implements CommandLineRunner {
         owner2.getPets().add(pet2);
 
         ownerService.save(owner2);
+
+        // Fixes the issue of invalid Visit
+        // SAVE THE VISIT ONLY AFTER THE OWNER HAS BEEN SAVED!!!!
+        firstVisitOfPet2.setPet(pet2);
+        visitService.save(firstVisitOfPet2);
 
         Owner owner3 = new Owner();
         owner3.setFirstName("Ken");
