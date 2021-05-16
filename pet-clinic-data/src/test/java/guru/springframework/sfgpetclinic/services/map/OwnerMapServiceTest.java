@@ -1,8 +1,6 @@
 package guru.springframework.sfgpetclinic.services.map;
 
 import guru.springframework.sfgpetclinic.model.Owner;
-import guru.springframework.sfgpetclinic.services.PetService;
-import guru.springframework.sfgpetclinic.services.PetTypeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,10 +19,6 @@ class OwnerMapServiceTest {
 
     private Owner owner1;
     private Owner owner2;
-
-    PetTypeService petTypeServMock;
-
-    PetService petServMock;
 
     OwnerMapService ownerMapServ;
 
@@ -73,7 +67,7 @@ class OwnerMapServiceTest {
     void save() {
         Owner owner = new Owner();
         owner.setFirstName("Owner3");
-        Owner savedOwner = ownerMapServ.save(owner);
+        ownerMapServ.save(owner);
         assertThat(ownerMapServ.findAll()).hasSize(3);
     }
 
