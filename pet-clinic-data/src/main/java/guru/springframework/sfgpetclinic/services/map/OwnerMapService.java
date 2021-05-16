@@ -81,7 +81,7 @@ public class OwnerMapService extends AbstractMapService<Owner,Long> implements O
     @Override
     public List<Owner> findByLastName(String lastName) {
         return super.findAll().stream()
-                .sorted()
+                //.sorted() Owner doesn't implement the Comparable Interface!!1
                 .filter(owner1 -> owner1.getLastName().equals(lastName))
                 .collect(Collectors.toList());
     }
