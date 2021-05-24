@@ -8,11 +8,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -21,24 +26,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(OwnerController.class)
+@ExtendWith(SpringExtension.class)
 class OwnerControllerTest {
 
+
+    @Autowired
     private MockMvc mockMvc;
 
     private List<Owner> owners;
 
-    @Mock
-    OwnerService ownerServiceMock;
-
-    @InjectMocks
-    OwnerController ownerController;
+    @MockBean
+    private OwnerService ownerServiceMock;
 
     @BeforeEach
     void setUp() {
-        ownerController = new OwnerController(ownerServiceMock);
-        mockMvc = standaloneSetup(ownerController).build();
-
         Owner owner1 = new Owner();
         owner1.setFirstName("owner1");
         Owner owner2 = new Owner();
@@ -57,6 +59,7 @@ class OwnerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("owners"))
                 .andExpect(model().attribute("owners",ownerServiceMock.findAll()))
+                .andExpect(content().string(containsString("PetClinic :: a Spring Framework demonstration")))
                 .andExpect(view().name("owners/index"))
                 .andDo(print());
     }
