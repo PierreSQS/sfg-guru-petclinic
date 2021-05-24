@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -21,10 +21,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class OwnerControllerTest {
 
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
+
+    private List<Owner> owners;
 
     @Mock
     OwnerService ownerServiceMock;
@@ -42,12 +44,15 @@ class OwnerControllerTest {
         Owner owner2 = new Owner();
         owner2.setFirstName("owner2");
 
-        List<Owner> owners = Arrays.asList(owner1, owner2);
-        when(ownerServiceMock.findAll()).thenReturn(owners);
+        owners = Arrays.asList(owner1, owner2);
+
     }
 
     @Test
     void listOwners() throws Exception {
+        // Given
+        when(ownerServiceMock.findAll()).thenReturn(owners);
+
         mockMvc.perform(get("/owners/index"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("owners"))
@@ -58,6 +63,9 @@ class OwnerControllerTest {
 
     @Test
     void listOwnersByIndexPage() throws Exception {
+        // Given
+        when(ownerServiceMock.findAll()).thenReturn(owners);
+
         mockMvc.perform(get("/owners/index.html"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("owners"))
