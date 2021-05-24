@@ -13,7 +13,7 @@ public class IndexController {
         return "index";
     }
 
-    @GetMapping("/oups")
+    @GetMapping("oups")
     public String oupsHandler() {
         return "notyetimplemented";
     }
