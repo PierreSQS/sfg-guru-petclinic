@@ -69,7 +69,7 @@ class OwnerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("owners"))
                 .andExpect(model().attribute("owners",hasSize(2)))
-                .andExpect(header().string("Content-Language","ene"))
+                .andExpect(header().string("Content-Language","en"))
                 .andExpect(view().name("owners/index"))
                 .andDo(print());
     }
