@@ -14,8 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -82,5 +82,25 @@ class OwnerControllerTest {
                 .andExpect(model().attributeDoesNotExist("owner"))
                 .andExpect(view().name("notyetimplemented"));
         verifyZeroInteractions(ownerServiceMock);
+    }
+
+    @Test
+    void showOwner() throws Exception{
+        final String pageTitle = "<title>PetClinic :: a Spring Framework demonstration</title>";
+        // Given
+        Owner owner = new Owner();
+        owner.setId(1L);
+        owner.setFirstName("Pierrot");
+        owner.setLastName("Mock");
+        owner.setPhone("1234567");
+
+        when(ownerServiceMock.findById(anyLong())).thenReturn(owner);
+        mockMvc.perform(get("/owners/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(pageTitle)))
+                .andExpect(model().attributeExists("owner"))
+                .andExpect(model().attribute("owner",
+                        hasProperty("firstName",is("Pierrot"))))
+                .andDo(print());
     }
 }
