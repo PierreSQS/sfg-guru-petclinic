@@ -29,7 +29,7 @@ public class DataLoader implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         int count = petTypeService.findAll().size();
         if (count == 0) {
             loadData();
@@ -58,12 +58,18 @@ public class DataLoader implements CommandLineRunner {
         surgery.setDescription("Surgery");
         Speciality savedSpecialitySurg = specialityService.save(surgery);
 
+
+        Visit firstVisitOfPet1 = new Visit();
+        firstVisitOfPet1.setDate(LocalDate.of(2020,3,16));
+        firstVisitOfPet1.setReason("Sneezy Fluppy");
+
         Owner owner1 = new Owner();
         Pet pet1 = new Pet();
         pet1.setPetType(savedPetTypeDog);
         pet1.setBirthDate(LocalDate.of(2011, 1, 1));
         pet1.setName("Fluppy");
         pet1.setOwner(owner1);
+        pet1.getVisits().add(firstVisitOfPet1);
 
         owner1.setFirstName("Pierrot");
         owner1.setLastName("Mongonnam");
@@ -73,6 +79,7 @@ public class DataLoader implements CommandLineRunner {
         owner1.getPets().add(pet1);
 
         ownerService.save(owner1);
+
 
         Visit firstVisitOfPet2 = new Visit();
         firstVisitOfPet2.setDate(LocalDate.of(2021,4,17));
@@ -84,6 +91,7 @@ public class DataLoader implements CommandLineRunner {
         pet2.setBirthDate(LocalDate.of(2012, 2, 2));
         pet2.setName("Tessy");
         pet2.setOwner(owner2);
+        pet2.getVisits().add(firstVisitOfPet2);
 
         owner2.setFirstName("Craig");
         owner2.setLastName("Walls");
