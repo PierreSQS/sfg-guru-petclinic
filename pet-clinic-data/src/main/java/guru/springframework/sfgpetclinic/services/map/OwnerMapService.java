@@ -85,4 +85,10 @@ public class OwnerMapService extends AbstractMapService<Owner,Long> implements O
                 .filter(owner1 -> owner1.getLastName().equals(lastName))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Owner> findAllByLastNameLike(String lastName) {
+        // TODO implement it in the future
+        return null;
+    }
 }
