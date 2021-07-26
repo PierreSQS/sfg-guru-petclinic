@@ -3,6 +3,7 @@ package guru.springframework.sfgpetclinic.controllers;
 import guru.springframework.sfgpetclinic.model.Owner;
 import guru.springframework.sfgpetclinic.services.OwnerService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 class OwnerControllerTest {
 
+    public static final String PAGE_TITLE = "<title>PetClinic :: a Spring Framework demonstration</title>";
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,38 +57,24 @@ class OwnerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("owners"))
                 .andExpect(model().attribute("owners",ownerServiceMock.findAll()))
-                .andExpect(content().string(containsString("PetClinic :: a Spring Framework demonstration")))
+                .andExpect(content().string(containsString(PAGE_TITLE)))
                 .andExpect(view().name("owners/index"))
                 .andDo(print());
     }
 
     @Test
-    void listOwnersByIndexPage() throws Exception {
-        // Given
-        when(ownerServiceMock.findAll()).thenReturn(owners);
-
-        mockMvc.perform(get("/owners/index.html"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("owners"))
-                .andExpect(model().attribute("owners",hasSize(2)))
-                .andExpect(header().string("Content-Language","en"))
-                .andExpect(view().name("owners/index"))
-                .andDo(print());
-    }
-
-    @Test
-    void findOwner() throws Exception {
+    void initFindForm() throws Exception {
         mockMvc.perform(get("/owners/find"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(model().attributeDoesNotExist("owner"))
-                .andExpect(view().name("notyetimplemented"));
+                .andExpect(model().attributeExists("owner"))
+                .andExpect(view().name("owners/findOwners"))
+                .andExpect(content().string(containsString(PAGE_TITLE)));
         verifyZeroInteractions(ownerServiceMock);
     }
 
     @Test
     void showOwner() throws Exception{
-        final String pageTitle = "<title>PetClinic :: a Spring Framework demonstration</title>";
         // Given
         Owner owner = new Owner();
         owner.setId(1L);
@@ -97,10 +85,19 @@ class OwnerControllerTest {
         when(ownerServiceMock.findById(anyLong())).thenReturn(owner);
         mockMvc.perform(get("/owners/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(pageTitle)))
+                .andExpect(content().string(containsString(PAGE_TITLE)))
                 .andExpect(model().attributeExists("owner"))
                 .andExpect(model().attribute("owner",
                         hasProperty("firstName",is("Pierrot"))))
+                .andDo(print());
+    }
+
+    @Test
+    void processFindForm() throws Exception {
+
+        // Then
+        mockMvc.perform(get("/owners"))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
