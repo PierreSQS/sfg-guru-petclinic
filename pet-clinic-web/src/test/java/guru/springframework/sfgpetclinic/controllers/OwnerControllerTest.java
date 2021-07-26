@@ -3,7 +3,6 @@ package guru.springframework.sfgpetclinic.controllers;
 import guru.springframework.sfgpetclinic.model.Owner;
 import guru.springframework.sfgpetclinic.services.OwnerService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,37 +56,6 @@ class OwnerControllerTest {
 
         owners = Arrays.asList(owner1, owner2);
 
-    }
-
-    @Test
-    @Disabled("No more needed since handler removed!!!" +
-            "\n What's interesting is that the test goes to showOwner()-Handler!!")
-    void listOwners() throws Exception {
-        // Given
-        when(ownerServiceMock.findAll()).thenReturn(owners);
-
-        mockMvc.perform(get("/owners/index"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("owners"))
-                .andExpect(model().attribute("owners",ownerServiceMock.findAll()))
-                .andExpect(content().string(containsString(PAGE_TITLE)))
-                .andExpect(view().name("owners/index"))
-                .andDo(print());
-    }
-
-    @Test
-    @Disabled("No more Need since Handler removed!!!\nJust for documentation purposes")
-    void listOwnersByIndexPage() throws Exception {
-        // Given
-        when(ownerServiceMock.findAll()).thenReturn(owners);
-
-        mockMvc.perform(get("/owners/index.html"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("owners"))
-                .andExpect(model().attribute("owners",hasSize(2)))
-                .andExpect(header().string("Content-Language","en"))
-                .andExpect(view().name("owners/index"))
-                .andDo(print());
     }
 
     @Test
