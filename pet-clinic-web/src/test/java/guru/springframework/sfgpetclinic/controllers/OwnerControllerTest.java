@@ -13,10 +13,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,6 +34,8 @@ class OwnerControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private Owner owner1;
+    private Owner owner2;
     private List<Owner> owners;
 
     @MockBean
@@ -39,16 +43,25 @@ class OwnerControllerTest {
 
     @BeforeEach
     void setUp() {
-        Owner owner1 = new Owner();
-        owner1.setFirstName("owner1");
-        Owner owner2 = new Owner();
-        owner2.setFirstName("owner2");
+        owner1 = new Owner();
+        owner1.setId(1L);
+        owner1.setFirstName("Owner1");
+        owner1.setLastName("Mock1");
+        owner1.setPhone("1234567");
+
+        owner2 = new Owner();
+        owner2.setId(2L);
+        owner2.setFirstName("Owner2");
+        owner2.setLastName("Mock2");
+        owner2.setPhone("1234567");
 
         owners = Arrays.asList(owner1, owner2);
 
     }
 
     @Test
+    @Disabled("No more needed since handler removed!!!" +
+            "\n What's interesting is that the test goes to showOwner()-Handler!!")
     void listOwners() throws Exception {
         // Given
         when(ownerServiceMock.findAll()).thenReturn(owners);
@@ -58,6 +71,21 @@ class OwnerControllerTest {
                 .andExpect(model().attributeExists("owners"))
                 .andExpect(model().attribute("owners",ownerServiceMock.findAll()))
                 .andExpect(content().string(containsString(PAGE_TITLE)))
+                .andExpect(view().name("owners/index"))
+                .andDo(print());
+    }
+
+    @Test
+    @Disabled("No more Need since Handler removed!!!\nJust for documentation purposes")
+    void listOwnersByIndexPage() throws Exception {
+        // Given
+        when(ownerServiceMock.findAll()).thenReturn(owners);
+
+        mockMvc.perform(get("/owners/index.html"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("owners"))
+                .andExpect(model().attribute("owners",hasSize(2)))
+                .andExpect(header().string("Content-Language","en"))
                 .andExpect(view().name("owners/index"))
                 .andDo(print());
     }
@@ -76,28 +104,40 @@ class OwnerControllerTest {
     @Test
     void showOwner() throws Exception{
         // Given
-        Owner owner = new Owner();
-        owner.setId(1L);
-        owner.setFirstName("Pierrot");
-        owner.setLastName("Mock");
-        owner.setPhone("1234567");
-
-        when(ownerServiceMock.findById(anyLong())).thenReturn(owner);
+        when(ownerServiceMock.findById(anyLong())).thenReturn(owner1);
         mockMvc.perform(get("/owners/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(PAGE_TITLE)))
                 .andExpect(model().attributeExists("owner"))
                 .andExpect(model().attribute("owner",
-                        hasProperty("firstName",is("Pierrot"))))
+                        hasProperty("firstName",is(owner1.getFirstName()))))
                 .andDo(print());
     }
 
     @Test
-    void processFindForm() throws Exception {
+    void processFindFormReturnManyOwners() throws Exception {
+        // When
+        when(ownerServiceMock.findAllByLastNameLike(anyString())).thenReturn(owners);
 
         // Then
         mockMvc.perform(get("/owners"))
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("selections"))
+                .andExpect(view().name("owners/ownersList"))
+                .andExpect(content().string(containsString("<h2>Owners</h2>")))
+                .andDo(print());
+    }
+
+    @Test
+    void processFindFormReturnOneOwner() throws Exception {
+        // When
+        when(ownerServiceMock.findAllByLastNameLike(anyString()))
+                           .thenReturn(Collections.singletonList(owner2));
+
+        // Then
+        mockMvc.perform(get("/owners"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/" + owner2.getId()))
                 .andDo(print());
     }
 }
