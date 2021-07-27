@@ -17,6 +17,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/owners")
 public class OwnerController {
+    private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
+
     private final OwnerService ownerService;
 
     public OwnerController(OwnerService ownerService) {
@@ -40,7 +42,7 @@ public class OwnerController {
      * @return a ModelMap with the model attributes for the view
      */
     @GetMapping("{ownerId}")
-    public ModelAndView showOwner(@PathVariable("ownerId") Long ownerId) {
+    public ModelAndView showOwner(@PathVariable Long ownerId) {
         ModelAndView mav = new ModelAndView("owners/ownerDetails");
         mav.addObject(ownerService.findById(ownerId));
         return mav;
@@ -71,5 +73,12 @@ public class OwnerController {
             model.put("selections", results);
             return "owners/ownersList";
         }
+    }
+
+    @GetMapping("new")
+    public String initCreateOwner(Map<String, Owner> model) {
+        Owner newOwner = new Owner();
+        model.put("owner", newOwner);
+       return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
     }
 }
