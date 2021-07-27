@@ -5,12 +5,10 @@ import guru.springframework.sfgpetclinic.services.OwnerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Map;
 
@@ -81,4 +79,16 @@ public class OwnerController {
         model.put("owner", newOwner);
        return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
     }
+
+    @PostMapping("new")
+    public String processCreateOwner(@Valid Owner owner, BindingResult result) {
+        if (result.hasErrors()) {
+            return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
+        }
+        else {
+            ownerService.save(owner);
+            return "redirect:/owners/" + owner.getId();
+        }
+    }
+
 }
