@@ -3,6 +3,7 @@ package guru.springframework.sfgpetclinic.controllers;
 import guru.springframework.sfgpetclinic.model.Owner;
 import guru.springframework.sfgpetclinic.services.OwnerService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -89,6 +90,13 @@ public class OwnerController {
             ownerService.save(owner);
             return "redirect:/owners/" + owner.getId();
         }
+    }
+
+    @GetMapping("{ownerId}/edit")
+    public String initUpdateOwner(@PathVariable("ownerId") Long id, Model model) {
+        Owner ownerById = ownerService.findById(id);
+        model.addAttribute("owner", ownerById);
+        return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
     }
 
 }

@@ -133,13 +133,23 @@ class OwnerControllerTest {
         mockMvc.perform(post("/owners/new")
                     .params(ownerParamMap))
                 .andExpect(status().is3xxRedirection())
-// DOESN'T WORK BECAUSE OF THE BINDER IN CONTROLLER!!!!
-             //   .andExpect(view().name("redirect:/owners/1"))
-// DOESN'T WORK WHEN REDIRECT!!!!!
-             // .andExpect(content().string(containsString("<h2>Owner Information</h2>")))
                 .andDo(print());
 
         verify(ownerServiceMock).save(ArgumentMatchers.any(Owner.class));
 
     }
+
+    @Test
+    void initUpdateOwner() throws Exception {
+        when(ownerServiceMock.findById(anyLong())).thenReturn(owner1);
+
+        mockMvc.perform(get("/owners/{id}/edit",1))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("owner"))
+                .andExpect(view().name("owners/createOrUpdateOwnerForm"))
+                .andExpect(content().string(containsString("<h2>Owner</h2>")))
+                .andDo(print());
+    }
+
+
 }
