@@ -152,4 +152,19 @@ class OwnerControllerTest {
     }
 
 
+    @Test
+    void processUpdateOwner() throws Exception {
+        when(ownerServiceMock.save(ArgumentMatchers.any(Owner.class))).thenReturn(owner1);
+
+        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        paramsMap.add("firstName","Joe");
+        paramsMap.add("lastName", "Mock");
+
+        mockMvc.perform(post("/owners/{id}/edit",owner1.getId())
+                    .params(paramsMap))
+                .andExpect(status().is3xxRedirection())
+                .andDo(print());
+
+        verify(ownerServiceMock).save(ArgumentMatchers.any(Owner.class));
+    }
 }
