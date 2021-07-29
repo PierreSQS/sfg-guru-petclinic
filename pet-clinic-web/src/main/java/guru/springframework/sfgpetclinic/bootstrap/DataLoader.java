@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+/**
+ * Modified by Pierrot on 7/29/21.
+ */
 @Slf4j
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -44,7 +47,8 @@ public class DataLoader implements CommandLineRunner {
         PetType cat = new PetType();
         cat.setName("Cat");
         PetType savedPetTypeCat = petTypeService.save(cat);
-        log.info("####### Saved PetTypes {} {} #########", savedPetTypeCat, savedPetTypeDog);
+        log.info("####### Saved {} PetTypes #########", petTypeService.findAll().size());
+        log.info("####### Saved PetTypes: {}, {} #########", savedPetTypeCat, savedPetTypeDog);
 
         Speciality radiology = new Speciality();
         radiology.setDescription("Radiology");
@@ -115,7 +119,7 @@ public class DataLoader implements CommandLineRunner {
         owner3.setPhone("3454545");
 
         ownerService.save(owner3);
-        log.info("####### Owners saved #########");
+        log.info("####### Saved {} Owners #########", ownerService.findAll().size());
 
         Vet vet1 = new Vet();
         vet1.setFirstName("Paul");
@@ -137,6 +141,6 @@ public class DataLoader implements CommandLineRunner {
         vet3.getSpecialities().add(savedSpecialitySurg);
 
         vetService.save(vet3);
-        log.info("####### Vets saved #########");
+        log.info("####### Saved {} Vets #########", vetService.findAll().size());
     }
 }
