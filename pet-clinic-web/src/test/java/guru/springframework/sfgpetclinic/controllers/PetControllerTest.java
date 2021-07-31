@@ -48,6 +48,7 @@ class PetControllerTest {
     @BeforeEach
     void setUp() {
         owner1 = new Owner();
+        owner1.setId(1L);
         owner1.setFirstName("Owner1");
         owner1.setLastName("Mock1");
         pet1 = Pet.builder().id(1L).name("Fluppy").build();
@@ -68,7 +69,7 @@ class PetControllerTest {
     }
 
     @Test
-    void processPetUpdateForm() throws Exception {
+    void testProcessPetUpdateForm() throws Exception {
         // Given
         when(ownerSrvMock.findById(anyLong())).thenReturn(owner1);
 
@@ -77,5 +78,18 @@ class PetControllerTest {
                 .andDo(print());
 
         verify(petSrvMock).save(ArgumentMatchers.any(Pet.class));
+    }
+
+    @Test
+    void testInitPetCreationForm() throws Exception {
+        when(ownerSrvMock.findById(anyLong())).thenReturn(owner1);
+        mockMvc.perform(get("/owners/{ownerId}/pets/new",owner1.getId()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("pet"))
+                .andExpect(view().name("pets/createOrUpdatePetForm"))
+                .andExpect(content().string(containsString("<span >Owner1 Mock1</span>")))
+                .andExpect(content().string(containsString("New Pet")))
+                .andExpect(content().string(containsString("name=\"name\" value=\"\" ")))
+                .andDo(print());
     }
 }

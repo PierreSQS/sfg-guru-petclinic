@@ -48,6 +48,14 @@ public class PetController {
         dataBinder.setDisallowedFields("id");
     }
 
+    @GetMapping("pets/new")
+    public  String initPetCreationForm(Pet pet, Owner owner, ModelMap modelMap) {
+        pet = new Pet();
+        pet.setOwner(owner);
+        modelMap.put("pet",pet);
+        return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
+    }
+
     @GetMapping("pets/{petId}/edit")
     public String initPetUpdateForm(@PathVariable Long petId, ModelMap model) {
 
