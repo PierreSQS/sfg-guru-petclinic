@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Profile({"default", "map"})
@@ -34,5 +35,12 @@ public class PetTypeMapService extends AbstractMapService<PetType, Long> impleme
     @Override
     public PetType save(PetType petType) {
         return super.save(petType);
+    }
+
+    @Override
+    public List<PetType> findByName(String text) {
+        return findAll().stream()
+                .filter(petType -> petType.getName().equals(text))
+                .collect(Collectors.toList());
     }
 }
