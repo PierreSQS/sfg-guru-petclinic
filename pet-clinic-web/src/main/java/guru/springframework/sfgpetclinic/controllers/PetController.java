@@ -1,15 +1,18 @@
 package guru.springframework.sfgpetclinic.controllers;
 
 import guru.springframework.sfgpetclinic.model.Owner;
+import guru.springframework.sfgpetclinic.model.Pet;
 import guru.springframework.sfgpetclinic.model.PetType;
 import guru.springframework.sfgpetclinic.services.OwnerService;
 import guru.springframework.sfgpetclinic.services.PetService;
 import guru.springframework.sfgpetclinic.services.PetTypeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collection;
 
 /**
@@ -53,4 +56,18 @@ public class PetController {
         return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
 
     }
+
+    @PostMapping("pets/{petId}/edit")
+    public String processPetUpdateForm(@Valid Pet pet, BindingResult result, Owner owner, ModelMap model) {
+        if (result.hasErrors()) {
+            pet.setOwner(owner);
+            model.put("pet", pet);
+            return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
+        } else {
+            owner.getPets().add(pet);
+            petService.save(pet);
+            return "redirect:/owners/"+owner.getId();
+        }
+    }
+
 }
