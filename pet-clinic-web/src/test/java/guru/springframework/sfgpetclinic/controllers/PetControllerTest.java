@@ -58,7 +58,7 @@ class PetControllerTest {
     }
 
     @Test
-    void testInitPetUpdateForm() throws Exception {
+    void initPetUpdateForm() throws Exception {
 
         when(petSrvMock.findById(anyLong())).thenReturn(pet1);
         mockMvc.perform(get("/owners/{ownerId}/pets/{petId}/edit", 1, 1))
@@ -69,7 +69,7 @@ class PetControllerTest {
     }
 
     @Test
-    void testProcessPetUpdateForm() throws Exception {
+    void processPetUpdateForm() throws Exception {
         // Given
         when(ownerSrvMock.findById(anyLong())).thenReturn(owner1);
 
@@ -81,7 +81,7 @@ class PetControllerTest {
     }
 
     @Test
-    void testInitPetCreationForm() throws Exception {
+    void initPetCreationForm() throws Exception {
         when(ownerSrvMock.findById(anyLong())).thenReturn(owner1);
         mockMvc.perform(get("/owners/{ownerId}/pets/new",owner1.getId()))
                 .andExpect(status().isOk())
@@ -90,6 +90,16 @@ class PetControllerTest {
                 .andExpect(content().string(containsString("<span >Owner1 Mock1</span>")))
                 .andExpect(content().string(containsString("New Pet")))
                 .andExpect(content().string(containsString("name=\"name\" value=\"\" ")))
+                .andDo(print());
+    }
+
+    @Test
+    void processPetCreation() throws Exception {
+        when(ownerSrvMock.findById(anyLong())).thenReturn(owner1);
+
+        mockMvc.perform(post("/owners/{ownerId}/pets/new", owner1.getId()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/"+owner1.getId()))
                 .andDo(print());
     }
 }

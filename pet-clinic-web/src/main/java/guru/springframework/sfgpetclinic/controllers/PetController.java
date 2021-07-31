@@ -8,6 +8,7 @@ import guru.springframework.sfgpetclinic.services.PetService;
 import guru.springframework.sfgpetclinic.services.PetTypeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +55,23 @@ public class PetController {
         pet.setOwner(owner);
         modelMap.put("pet",pet);
         return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
+    }
+
+    @PostMapping("pets/new")
+    public String processPetCreation(@Valid Pet pet, Owner owner, BindingResult result, ModelMap modelMap) {
+        if (StringUtils.hasLength(pet.getName()) && pet.isNew() && owner.getPet(pet.getName(), true) != null) {
+            result.rejectValue("name", "duplicate", "already exists");
+        }
+
+        owner.getPets().add(pet);
+        if (result.hasErrors()) {
+            modelMap.put("pet", pet);
+            return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
+        }
+        else {
+            petService.save(pet);
+            return "redirect:/owners/" + owner.getId();
+        }
     }
 
     @GetMapping("pets/{petId}/edit")
