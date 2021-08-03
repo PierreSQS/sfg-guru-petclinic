@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,6 +69,14 @@ class VisitControllerTest {
                 .andExpect(model().attribute("pet",hasProperty("owner")))
                 .andExpect(view().name("pets/createOrUpdateVisitForm"))
                 .andExpect(content().string(containsString("Fluppy")))
+                .andDo(print());
+    }
+
+    @Test
+    void processCreateVisit() throws Exception {
+        mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/visits/new"
+                ,owner.getId(),pet.getId()))
+                .andExpect(status().is3xxRedirection())
                 .andDo(print());
     }
 }
