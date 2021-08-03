@@ -19,6 +19,7 @@ public class Pet extends BaseEntity {
 
     @Builder
     public Pet(Long id,String name) {
+        super.setId(id);
         this.name = name;
     }
 
