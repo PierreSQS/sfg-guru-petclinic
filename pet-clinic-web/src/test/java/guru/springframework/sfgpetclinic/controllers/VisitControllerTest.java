@@ -3,6 +3,7 @@ package guru.springframework.sfgpetclinic.controllers;
 import guru.springframework.sfgpetclinic.model.Owner;
 import guru.springframework.sfgpetclinic.model.Pet;
 import guru.springframework.sfgpetclinic.model.PetType;
+import guru.springframework.sfgpetclinic.model.Visit;
 import guru.springframework.sfgpetclinic.services.OwnerService;
 import guru.springframework.sfgpetclinic.services.PetService;
 import guru.springframework.sfgpetclinic.services.VisitService;
@@ -19,7 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -77,6 +80,8 @@ class VisitControllerTest {
         mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/visits/new"
                 ,owner.getId(),pet.getId()))
                 .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/1"))
                 .andDo(print());
+        verify(visitSrvMock).save(any(Visit.class));
     }
 }
