@@ -45,6 +45,7 @@ public class VisitController {
         model.put("pet", pet);
         Visit visit = new Visit();
         pet.getVisits().add(visit);
+        visit.setPet(pet);
         return visit;
     }
 
