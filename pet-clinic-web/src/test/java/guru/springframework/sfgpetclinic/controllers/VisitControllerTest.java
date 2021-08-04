@@ -80,7 +80,7 @@ class VisitControllerTest {
         mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/visits/new"
                 ,owner.getId(),pet.getId()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/owners/1"))
+                .andExpect(view().name("redirect:/owners/{ownerId}"))
                 .andDo(print());
         verify(visitSrvMock).save(any(Visit.class));
     }
