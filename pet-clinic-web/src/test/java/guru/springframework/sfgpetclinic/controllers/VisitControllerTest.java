@@ -84,4 +84,14 @@ class VisitControllerTest {
                 .andDo(print());
         verify(visitSrvMock).save(any(Visit.class));
     }
+
+    @Test
+    void processCreateVisitSpringTeamSolution() throws Exception {
+        mockMvc.perform(post("/owners/*/pets/{petId}/visits/new", owner.getId())
+                    .param("name", "George")
+                    .param("description", "Visit Description"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/{ownerId}"))
+                .andDo(print());
+    }
 }
