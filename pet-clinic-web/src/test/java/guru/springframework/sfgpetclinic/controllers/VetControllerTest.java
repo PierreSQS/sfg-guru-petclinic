@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -23,8 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {VetController.class})
 class VetControllerTest {
 
-    private List<Vet> vets;
-
     private Vet v1;
 
     private Vet v2;
@@ -38,31 +37,34 @@ class VetControllerTest {
     @BeforeEach
     void setUp() {
         Speciality radiology = new Speciality();
+        radiology.setId(1L);
         radiology.setDescription("Radiology");
 
         Speciality dentistry = new Speciality();
+        dentistry.setId(2L);
         dentistry.setDescription("Dentistry");
 
         Set<Speciality> specialities = Set.of(dentistry,radiology);
 
         v1 = new Vet();
+        v1.setId(1L);
         v1.setFirstName("Stefan");
         v1.setLastName("Jockenhövel");
         v1.setSpecialities(specialities);
 
         v2 = new Vet();
+        v2.setId(2L);
         v2.setFirstName("Adamou");
         v2.setLastName("Ndam Njoya");
 
-        vets = List.of(v1,v2);
+        List<Vet> vets = List.of(v1, v2);
 
+        // given
+        given(vetSrvMock.findAll()).willReturn(vets);
     }
 
     @Test
     void listVets() throws Exception {
-        // given
-        given(vetSrvMock.findAll()).willReturn(vets);
-
         // when, then
         mockMvc.perform(get("/vets"))
                 .andExpect(status().isOk())
@@ -70,6 +72,18 @@ class VetControllerTest {
                 .andExpect(model().attribute("vets",is(not(empty()))))
                 .andExpect(model().attribute("vets",containsInAnyOrder(v1, v2)))
                 .andExpect(view().name("vets/index"))
+                .andDo(print());
+    }
+
+    @Test
+    void getVetsAsJson() throws Exception {
+        mockMvc.perform(get("/api/v1/vets"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[1].lastName").value("Ndam Njoya"))
+// Order of Specialities not guaranteed
+//                .andExpect(jsonPath("$[0].specialities[1].description")
+//                        .value(is(equalTo("Radiology"))))
                 .andDo(print());
     }
 }
